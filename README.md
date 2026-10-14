@@ -52,7 +52,7 @@ Build the extension zips with `rt-socd-extension\build.ps1` and the Windows app 
 
 ## License
 
-[MIT](LICENSE). The bundled Microsoft WebView2 SDK in `rt-socd-windows/lib` is licensed separately by Microsoft.
+[MIT](LICENSE). The bundled Microsoft WebView2 SDK in `rt-socd-windows/lib` is licensed separately by Microsoft (see [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md)).
 
 ---
 
