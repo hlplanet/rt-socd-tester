@@ -1,0 +1,264 @@
+:root {
+    --bg: #0f1218;
+    --panel: rgba(255, 255, 255, 0.04);
+    --line: #2a2f40;
+    --text: #e0e4f5;
+    --muted: #8892b0;
+    --accent: #00ffaa;
+    --accent-2: #00c4ff;
+    --warn: #f6ad55;
+    --mono: ui-monospace, SFMono-Regular, Consolas, 'Courier New', monospace;
+    color-scheme: dark;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font: 14px/1.45 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+/* Popup is fixed width; ?tab=1 opens a roomier full-tab layout */
+body {
+    width: 440px;
+    padding: 14px;
+}
+
+html.full-tab body {
+    width: auto;
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 32px 20px;
+}
+
+a {
+    color: var(--accent-2);
+}
+
+.top {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.brand {
+    flex: 1;
+    min-width: 0;
+}
+
+h1 {
+    margin: 0;
+    font-size: 16px;
+    line-height: 1.2;
+    background: linear-gradient(90deg, var(--accent-2), var(--accent));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+html.full-tab h1 {
+    font-size: 22px;
+}
+
+.by {
+    font-size: 12px;
+    color: var(--muted);
+    text-decoration: none;
+}
+
+.by:hover {
+    color: var(--accent);
+}
+
+.open-tab {
+    display: grid;
+    place-items: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    background: var(--panel);
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 16px;
+}
+
+.open-tab:hover {
+    color: var(--accent);
+}
+
+html.full-tab .open-tab {
+    display: none;
+}
+
+.tabs {
+    display: flex;
+    gap: 4px;
+    padding: 3px;
+    margin-bottom: 12px;
+    border-radius: 10px;
+    background: var(--panel);
+}
+
+.tab {
+    flex: 1;
+    padding: 7px 10px;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--muted);
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.tab.active {
+    background: rgba(0, 255, 170, 0.12);
+    border-color: rgba(0, 255, 170, 0.3);
+    color: var(--accent);
+}
+
+.desc {
+    margin: 0 0 10px;
+    font-size: 12.5px;
+    color: #a9b1cc;
+}
+
+.desc b {
+    color: var(--text);
+}
+
+.row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 10px;
+    margin-bottom: 10px;
+}
+
+.row label {
+    font-size: 12px;
+    color: var(--muted);
+}
+
+.btn,
+select {
+    padding: 6px 12px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: #1a1f2c;
+    color: var(--text);
+    font: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.btn:hover {
+    background: #232937;
+}
+
+.btn.primary {
+    background: rgba(0, 255, 170, 0.14);
+    border-color: rgba(0, 255, 170, 0.35);
+    color: var(--accent);
+}
+
+.live {
+    font-family: var(--mono);
+    font-size: 12.5px;
+    color: var(--accent-2);
+}
+
+.lanes {
+    display: block;
+    width: 100%;
+    height: 56px; /* fixed CSS height: the drawing size is set from it, so it must not follow the canvas attributes */
+    border-radius: 10px;
+    background: rgba(0, 0, 0, 0.3);
+}
+
+#socd-canvas {
+    height: 78px;
+}
+
+.stats {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 6px;
+    margin-top: 10px;
+}
+
+.stat {
+    padding: 7px 4px;
+    border-radius: 10px;
+    background: var(--panel);
+    text-align: center;
+    min-width: 0;
+}
+
+.stat .v {
+    font-family: var(--mono);
+    font-size: 15px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.stat .l {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--muted);
+}
+
+.verdict {
+    margin-top: 10px;
+    padding: 8px 12px;
+    border-radius: 10px;
+    background: var(--panel);
+    font-weight: 600;
+    font-size: 13px;
+    color: #a9b1cc;
+}
+
+.verdict[data-state="on"] { color: var(--accent); background: rgba(0, 255, 170, 0.08); }
+.verdict[data-state="off"] { color: var(--accent-2); background: rgba(0, 196, 255, 0.08); }
+.verdict[data-state="mixed"] { color: var(--warn); background: rgba(246, 173, 85, 0.08); }
+
+.counts {
+    margin-top: 6px;
+    font-size: 12px;
+    color: var(--muted);
+}
+
+.foot {
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px solid var(--line);
+}
+
+.cta {
+    display: block;
+    padding: 9px 12px;
+    border-radius: 10px;
+    background: rgba(0, 196, 255, 0.08);
+    border: 1px solid rgba(0, 196, 255, 0.25);
+    font-size: 12.5px;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.cta:hover {
+    border-color: var(--accent-2);
+}
+
+.small {
+    margin-top: 8px;
+    font-size: 11px;
+    color: var(--muted);
+}

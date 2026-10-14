@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Rapid Trigger &amp; SOCD Tester</title>
+    <link rel="stylesheet" href="tester.css">
+</head>
+<body>
+    <header class="top">
+        <img src="icons/icon48.png" alt="" width="32" height="32">
+        <div class="brand">
+            <h1>Rapid Trigger &amp; SOCD Tester</h1>
+            <a class="by" data-site="header" target="_blank" rel="noopener">by HLPlanet.com</a>
+        </div>
+        <a class="open-tab" href="tester.html?tab=1" target="_blank" title="Open in a full tab">&#x2197;</a>
+    </header>
+
+    <nav class="tabs" role="tablist">
+        <button type="button" class="tab active" data-panel="tap" role="tab" aria-selected="true">Rapid trigger</button>
+        <button type="button" class="tab" data-panel="socd" role="tab" aria-selected="false">SOCD / Snap Tap</button>
+    </nav>
+
+    <!-- Rapid trigger tap test -->
+    <section class="panel" id="panel-tap">
+        <p class="desc">Tap one key as fast as you can. Rapid trigger resets the key as soon as it starts rising, so the <b>min release</b> gap gets shorter. Compare keyboards or rapid trigger settings.</p>
+        <div class="row">
+            <button type="button" class="btn primary" id="tap-start">Start tap test</button>
+            <select id="tap-duration" aria-label="Test length">
+                <option value="5000">5 seconds</option>
+                <option value="10000">10 seconds</option>
+            </select>
+            <span class="live" id="tap-live">Best: --</span>
+        </div>
+        <canvas class="lanes" id="tap-canvas" height="56"></canvas>
+        <div class="stats">
+            <div class="stat"><div class="v" data-tap="taps">--</div><div class="l">Taps</div></div>
+            <div class="stat"><div class="v" data-tap="rate">--</div><div class="l">Taps/sec</div></div>
+            <div class="stat"><div class="v" data-tap="peak">--</div><div class="l">Peak/sec</div></div>
+            <div class="stat"><div class="v" data-tap="hold">--</div><div class="l">Avg press</div></div>
+            <div class="stat"><div class="v" data-tap="gap">--</div><div class="l">Min release</div></div>
+        </div>
+    </section>
+
+    <!-- SOCD test -->
+    <section class="panel" id="panel-socd" hidden>
+        <p class="desc">SOCD (Snap Tap, Snappy Tappy) means that when two opposite keys are held, only the last one pressed counts. Keyboards swap the keys within a millisecond or two, faster than any finger, so the test can tell it apart from you.</p>
+        <div class="row">
+            <label for="socd-pair">Keys</label>
+            <select id="socd-pair">
+                <option value="ad">A / D</option>
+                <option value="ws">W / S</option>
+                <option value="arrows">Left / Right arrows</option>
+            </select>
+            <button type="button" class="btn" id="socd-clear">Clear</button>
+        </div>
+        <canvas class="lanes" id="socd-canvas" height="78"></canvas>
+        <div class="verdict" id="socd-verdict" data-state=""></div>
+        <div class="counts" id="socd-counts"></div>
+    </section>
+
+    <footer class="foot">
+        <a class="cta" data-site="footer" target="_blank" rel="noopener">Test every key, rollover and chatter on the full HLPlanet keyboard tester &rarr;</a>
+        <div class="small">Only keys pressed in this window are read. Nothing is stored or sent anywhere.</div>
+    </footer>
+
+    <script src="tester.js"></script>
+</body>
+</html>
