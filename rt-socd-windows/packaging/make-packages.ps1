@@ -1,4 +1,4 @@
-# Generates winget, Chocolatey and Scoop packages for the built zip in ..\dist.
+﻿# Generates winget, Chocolatey and Scoop packages for the built zip in ..\dist.
 # The zip must be hosted at a permanent public URL. Default: a GitHub release in <Owner>/rt-socd-tester.
 #
 #   .\make-packages.ps1 -Owner your-github-name
@@ -36,7 +36,7 @@ function Write-File([string]$path, [string]$text) {
 # ---- winget (submit as a pull request to github.com/microsoft/winget-pkgs) ----
 $id = 'HLPlanet.RTSOCDTester'
 $wg = Join-Path $out "winget\manifests\h\HLPlanet\RTSOCDTester\$version"
-$schema = '1.6.0'
+$schema = '1.12.0'
 Write-File "$wg\$id.yaml" @"
 # yaml-language-server: `$schema=https://aka.ms/winget-manifest.version.$schema.schema.json
 PackageIdentifier: $id
@@ -77,10 +77,13 @@ PublisherSupportUrl: $site
 Author: HLPlanet
 PackageName: Rapid Trigger & SOCD Tester
 PackageUrl: $site
-License: Freeware
-Copyright: HLPlanet.com
-ShortDescription: $short
-Description: $long
+License: MIT
+LicenseUrl: $repoUrl/blob/main/LICENSE
+Copyright: Copyright (c) 2026 HLPlanet
+PrivacyUrl: $repoUrl/blob/main/rt-socd-extension/PRIVACY.md
+ReleaseNotesUrl: $repoUrl/releases/tag/v$version
+ShortDescription: '$short'
+Description: '$long'
 Moniker: rt-socd-tester
 Tags:
 - keyboard
@@ -109,10 +112,12 @@ Write-File "$ch\rt-socd-tester.nuspec" @"
     <packageSourceUrl>$repoUrl</packageSourceUrl>
     <projectSourceUrl>$repoUrl</projectSourceUrl>
     <bugTrackerUrl>$repoUrl/issues</bugTrackerUrl>
-    <iconUrl>https://raw.githubusercontent.com/$Owner/$Repo/main/icon128.png</iconUrl>
+    <iconUrl>https://cdn.jsdelivr.net/gh/$Owner/$Repo@main/icon128.png</iconUrl>
     <copyright>HLPlanet.com</copyright>
+    <licenseUrl>$repoUrl/blob/main/LICENSE</licenseUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <tags>keyboard keyboard-tester rapid-trigger socd snap-tap hall-effect gaming freeware</tags>
+    <releaseNotes>$repoUrl/releases/tag/v$version</releaseNotes>
+    <tags>keyboard keyboard-tester rapid-trigger socd snap-tap hall-effect gaming foss</tags>
     <summary>$short</summary>
     <description>$long</description>
     <dependencies>
@@ -143,12 +148,40 @@ Write-File "$ch\tools\chocolateyuninstall.ps1" @"
 if (Test-Path `$shortcut) { Remove-Item `$shortcut -Force }
 "@
 
+# Pack the Chocolatey files into a .nupkg (Open Packaging Conventions zip, same format "choco pack" makes)
+Add-Type -AssemblyName WindowsBase
+$nupkgPath = Join-Path $ch "rt-socd-tester.$version.nupkg"
+$pkg = [System.IO.Packaging.Package]::Open($nupkgPath, [System.IO.FileMode]::Create)
+try {
+    $parts = @(
+        @{ uri = "/rt-socd-tester.nuspec"; file = (Join-Path $ch "rt-socd-tester.nuspec"); type = "application/octet" },
+        @{ uri = "/tools/chocolateyinstall.ps1"; file = (Join-Path $ch "tools/chocolateyinstall.ps1"); type = "application/octet" },
+        @{ uri = "/tools/chocolateyuninstall.ps1"; file = (Join-Path $ch "tools/chocolateyuninstall.ps1"); type = "application/octet" }
+    )
+    foreach ($p in $parts) {
+        $part = $pkg.CreatePart((New-Object Uri($p.uri, [UriKind]::Relative)), $p.type, [System.IO.Packaging.CompressionOption]::Normal)
+        $bytes = [System.IO.File]::ReadAllBytes($p.file)
+        $stream = $part.GetStream()
+        $stream.Write($bytes, 0, $bytes.Length)
+        $stream.Dispose()
+        if ($p.uri -like "*.nuspec") {
+            $pkg.CreateRelationship($part.Uri, [System.IO.Packaging.TargetMode]::Internal, "http://schemas.microsoft.com/packaging/2010/07/manifest") | Out-Null
+        }
+    }
+    $pkg.PackageProperties.Identifier = "rt-socd-tester"
+    $pkg.PackageProperties.Version = $version
+    $pkg.PackageProperties.Creator = "HLPlanet"
+    $pkg.PackageProperties.Description = $short
+} finally {
+    $pkg.Close()
+}
+
 # ---- Scoop (your own bucket repo, or a pull request to ScoopInstaller/Extras) ----
 $scoop = [ordered]@{
     version      = $version
     description  = $short
     homepage     = $site
-    license      = 'Freeware'
+    license      = 'MIT'
     depends      = @()
     notes        = 'Needs the Microsoft Edge WebView2 Runtime (built into Windows 11).'
     architecture = [ordered]@{ '64bit' = [ordered]@{ url = $url; hash = $sha.ToLower() } }
